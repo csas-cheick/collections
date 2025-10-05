@@ -359,7 +359,7 @@ class CustomerService {
   validateMeasureData(data: CreateMeasureRequest | UpdateMeasureRequest): { valid: boolean; message?: string } {
     const measurements = [
       { field: 'tourPoitrine', name: 'Tour de poitrine', min: 0, max: 300 },
-      { field: 'tourHanches', name: 'Tour de hanches', min: 0, max: 300 },
+      { field: 'tourCeinture', name: 'Tour ceinture', min: 0, max: 300 },
       { field: 'longueurManche', name: 'Longueur de manche', min: 0, max: 150 },
       { field: 'tourBras', name: 'Tour de bras', min: 0, max: 100 },
       { field: 'longueurChemise', name: 'Longueur de chemise', min: 0, max: 200 },

@@ -21,13 +21,16 @@ export default function Clients() {
   });
   const [measuresData, setMeasuresData] = useState({
     tourPoitrine: "",
-    tourHanches: "",
+    tourCeinture: "",
     longueurManche: "",
     tourBras: "",
     longueurChemise: "",
     longueurPantalon: "",
     largeurEpaules: "",
-    tourCou: ""
+    tourCou: "",
+    tourMachette: "",
+    basDuPied: "",
+    cuisse: ""
   });
   const [formErrors, setFormErrors] = useState<{[key: string]: string}>({});
   const [submitting, setSubmitting] = useState(false);
@@ -92,13 +95,16 @@ export default function Clients() {
     setViewingMeasures({ customer, measures: null });
     setMeasuresData({
       tourPoitrine: "",
-      tourHanches: "",
+      tourCeinture: "",
       longueurManche: "",
       tourBras: "",
       longueurChemise: "",
       longueurPantalon: "",
       largeurEpaules: "",
-      tourCou: ""
+      tourCou: "",
+      tourMachette: "",
+      basDuPied: "",
+      cuisse: ""
     });
     
     try {
@@ -112,13 +118,16 @@ export default function Clients() {
         setViewingMeasures({ customer, measures });
         setMeasuresData({
           tourPoitrine: measures.tourPoitrine?.toString() || "",
-          tourHanches: measures.tourHanches?.toString() || "",
+          tourCeinture: measures.tourCeinture?.toString() || "",
           longueurManche: measures.longueurManche?.toString() || "",
           tourBras: measures.tourBras?.toString() || "",
           longueurChemise: measures.longueurChemise?.toString() || "",
           longueurPantalon: measures.longueurPantalon?.toString() || "",
           largeurEpaules: measures.largeurEpaules?.toString() || "",
-          tourCou: measures.tourCou?.toString() || ""
+          tourCou: measures.tourCou?.toString() || "",
+          tourMachette: measures.tourMachette?.toString() || "",
+          basDuPied: measures.basDuPied?.toString() || "",
+          cuisse: measures.cuisse?.toString() || ""
         });
       }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -141,13 +150,16 @@ export default function Clients() {
     setViewingMeasures({ customer: {} as CustomerSummary, measures: null });
     setMeasuresData({
       tourPoitrine: "",
-      tourHanches: "",
+      tourCeinture: "",
       longueurManche: "",
       tourBras: "",
       longueurChemise: "",
       longueurPantalon: "",
       largeurEpaules: "",
-      tourCou: ""
+      tourCou: "",
+      tourMachette: "",
+      basDuPied: "",
+      cuisse: ""
     });
   };
 
@@ -232,13 +244,16 @@ export default function Clients() {
       const measureRequest: CreateMeasureRequest = {
         customerId: viewingMeasures.customer.id,
         tourPoitrine: measuresData.tourPoitrine ? Number(measuresData.tourPoitrine) : undefined,
-        tourHanches: measuresData.tourHanches ? Number(measuresData.tourHanches) : undefined,
+        tourCeinture: measuresData.tourCeinture ? Number(measuresData.tourCeinture) : undefined,
         longueurManche: measuresData.longueurManche ? Number(measuresData.longueurManche) : undefined,
         tourBras: measuresData.tourBras ? Number(measuresData.tourBras) : undefined,
         longueurChemise: measuresData.longueurChemise ? Number(measuresData.longueurChemise) : undefined,
         longueurPantalon: measuresData.longueurPantalon ? Number(measuresData.longueurPantalon) : undefined,
         largeurEpaules: measuresData.largeurEpaules ? Number(measuresData.largeurEpaules) : undefined,
-        tourCou: measuresData.tourCou ? Number(measuresData.tourCou) : undefined
+        tourCou: measuresData.tourCou ? Number(measuresData.tourCou) : undefined,
+        tourMachette: measuresData.tourMachette ? Number(measuresData.tourMachette) : undefined,
+        basDuPied: measuresData.basDuPied ? Number(measuresData.basDuPied) : undefined,
+        cuisse: measuresData.cuisse ? Number(measuresData.cuisse) : undefined
       };
 
       const validation = customerService.validateMeasureData(measureRequest);
@@ -425,7 +440,7 @@ export default function Clients() {
 
       {/* Modal Client */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100000] p-4">
           <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
             {/* Header du modal */}
             <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
@@ -537,7 +552,7 @@ export default function Clients() {
 
       {/* Modal Mesures */}
       {showMeasuresModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100000] p-4">
           <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             {/* Header du modal */}
             <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
@@ -573,18 +588,18 @@ export default function Clients() {
                   />
                 </div>
 
-                {/* Tour de hanches */}
+                {/* Tour ceinture */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Tour de hanches (cm)
+                    Tour ceinture (cm)
                   </label>
                   <input
                     type="number"
                     step="0.1"
                     min="0"
                     max="300"
-                    value={measuresData.tourHanches}
-                    onChange={(e) => setMeasuresData(prev => ({ ...prev, tourHanches: e.target.value }))}
+                    value={measuresData.tourCeinture}
+                    onChange={(e) => setMeasuresData(prev => ({ ...prev, tourCeinture: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     placeholder="Ex: 95.0"
                   />
@@ -672,6 +687,57 @@ export default function Clients() {
                     onChange={(e) => setMeasuresData(prev => ({ ...prev, tourCou: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     placeholder="Ex: 42.0"
+                  />
+                </div>
+
+                {/* Tour machette */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Tour machette (cm)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="100"
+                    value={measuresData.tourMachette}
+                    onChange={(e) => setMeasuresData(prev => ({ ...prev, tourMachette: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    placeholder="Ex: 25.0"
+                  />
+                </div>
+
+                {/* Bas du pied */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Bas du pied (cm)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="50"
+                    value={measuresData.basDuPied}
+                    onChange={(e) => setMeasuresData(prev => ({ ...prev, basDuPied: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    placeholder="Ex: 27.0"
+                  />
+                </div>
+
+                {/* Cuisse */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Cuisse (cm)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="100"
+                    value={measuresData.cuisse}
+                    onChange={(e) => setMeasuresData(prev => ({ ...prev, cuisse: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    placeholder="Ex: 65.0"
                   />
                 </div>
 

@@ -359,13 +359,16 @@ class CustomerService {
   validateMeasureData(data: CreateMeasureRequest | UpdateMeasureRequest): { valid: boolean; message?: string } {
     const measurements = [
       { field: 'tourPoitrine', name: 'Tour de poitrine', min: 0, max: 300 },
-      { field: 'tourHanches', name: 'Tour de hanches', min: 0, max: 300 },
+      { field: 'tourCeinture', name: 'Tour ceinture', min: 0, max: 300 },
       { field: 'longueurManche', name: 'Longueur de manche', min: 0, max: 150 },
       { field: 'tourBras', name: 'Tour de bras', min: 0, max: 100 },
       { field: 'longueurChemise', name: 'Longueur de chemise', min: 0, max: 200 },
       { field: 'longueurPantalon', name: 'Longueur de pantalon', min: 0, max: 150 },
       { field: 'largeurEpaules', name: 'Largeur d\'épaules', min: 0, max: 100 },
-      { field: 'tourCou', name: 'Tour de cou', min: 0, max: 100 }
+      { field: 'tourCou', name: 'Tour de cou', min: 0, max: 100 },
+      { field: 'tourMachette', name: 'Tour machette', min: 0, max: 100 },
+      { field: 'basDuPied', name: 'Bas du pied', min: 0, max: 50 },
+      { field: 'cuisse', name: 'Cuisse', min: 0, max: 100 }
     ];
 
     for (const measurement of measurements) {

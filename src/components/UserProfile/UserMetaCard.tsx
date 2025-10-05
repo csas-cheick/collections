@@ -3,20 +3,95 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
-import { User } from "../../types";
+import { User, UpdateUserRequest } from "../../types/user";
+import { useState, useEffect } from "react";
+import userService from "../../services/userService";
 
 interface UserMetaCardProps {
   user: User | null;
   loading?: boolean;
+  onUpdate?: (updatedUser: User) => void;
 }
 
-export default function UserMetaCard({ user, loading }: UserMetaCardProps) {
+export default function UserMetaCard({ user, loading, onUpdate }: UserMetaCardProps) {
   const { isOpen, openModal, closeModal } = useModal();
+  const [pictureFile, setPictureFile] = useState<File | undefined>(undefined);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
-  const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
-    closeModal();
+  // Form state for editing
+  const [formData, setFormData] = useState({
+    name: user?.name || "",
+    userName: user?.userName || "",
+    email: user?.email || "",
+    phone: user?.phone || ""
+  });
+
+  // Update form data when user changes
+  useEffect(() => {
+    setFormData({
+      name: user?.name || "",
+      userName: user?.userName || "",
+      email: user?.email || "",
+      phone: user?.phone || ""
+    });
+  }, [user]);
+  
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const validation = userService.validateImageFile(file);
+      if (validation.valid) {
+        setPictureFile(file);
+        setError(null);
+      } else {
+        setError(validation.message || 'Fichier invalide');
+        e.target.value = ''; // Reset input
+      }
+    }
+  };
+  
+  const handleSave = async () => {
+    if (!user) return;
+
+    try {
+      setSaving(true);
+      setError(null);
+
+      const updateData: UpdateUserRequest = {
+        name: formData.name,
+        userName: formData.userName,
+        phone: formData.phone || undefined,
+        email: formData.email,
+        role: user.role, // Garder le rôle existant
+        country: user.country || undefined,
+        city: user.city || undefined,
+        status: user.status,
+        picture: user.picture || undefined
+      };
+
+      const response = await userService.updateUser(user.id, updateData, pictureFile);
+      
+      if (response.success && response.user) {
+        // Mettre à jour les données locales
+        onUpdate?.(response.user);
+        closeModal();
+        setPictureFile(undefined);
+      } else {
+        setError(response.message);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erreur lors de la mise à jour');
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) {
@@ -123,32 +198,80 @@ export default function UserMetaCard({ user, loading }: UserMetaCardProps) {
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Prénom</Label>
-                    <Input type="text" value={user?.name || ""} />
+                    <Input 
+                      type="text" 
+                      value={formData.name} 
+                      onChange={(e) => handleInputChange('name', e.target.value)}
+                    />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Nom d'utilisateur</Label>
-                    <Input type="text" value={user?.userName || ""} />
+                    <Input 
+                      type="text" 
+                      value={formData.userName}
+                      onChange={(e) => handleInputChange('userName', e.target.value)}
+                    />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Email</Label>
-                    <Input type="text" value={user?.email || ""} />
+                    <Input 
+                      type="text" 
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                    />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Téléphone</Label>
-                    <Input type="text" value={user?.phone || ""} />
+                    <Input 
+                      type="text" 
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                    />
+                  </div>
+
+                  <div className="col-span-2">
+                    <Label>Image de profil</Label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                    />
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                      Formats supportés: JPEG, PNG, GIF, WebP (max 10MB)
+                    </p>
+                    {pictureFile && (
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Fichier sélectionné: {pictureFile.name}</p>
+                        <img
+                          src={URL.createObjectURL(pictureFile)}
+                          alt="Aperçu"
+                          className="mt-2 w-20 h-20 object-cover rounded-lg border"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
+              
+              {/* Affichage des erreurs */}
+              {error && (
+                <div className="px-2 mt-4">
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-600 dark:bg-red-900/10 dark:border-red-800 dark:text-red-400">
+                    {error}
+                  </div>
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-              <Button size="sm" variant="outline" onClick={closeModal}>
+              <Button size="sm" variant="outline" onClick={closeModal} disabled={saving}>
                 Fermer
               </Button>
-              <Button size="sm" onClick={handleSave}>
-                Enregistrer les modifications
+              <Button size="sm" onClick={handleSave} disabled={saving}>
+                {saving ? "Enregistrement..." : "Enregistrer les modifications"}
               </Button>
             </div>
           </form>

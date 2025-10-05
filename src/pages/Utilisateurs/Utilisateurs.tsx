@@ -38,7 +38,8 @@ export default function Utilisateurs() {
     country: '',
     city: '',
     status: true,
-    picture: ''
+    picture: '',
+    pictureFile: undefined
   });
 
   // États pour les filtres
@@ -100,7 +101,8 @@ export default function Utilisateurs() {
       country: '',
       city: '',
       status: true,
-      picture: ''
+      picture: '',
+      pictureFile: undefined
     });
     setShowCreateModal(true);
   };
@@ -118,7 +120,8 @@ export default function Utilisateurs() {
       country: user.country || '',
       city: user.city || '',
       status: user.status,
-      picture: user.picture || ''
+      picture: user.picture || '',
+      pictureFile: undefined
     });
     setShowEditModal(true);
   };
@@ -129,6 +132,21 @@ export default function Utilisateurs() {
     setShowEditModal(false);
     setEditingUser(null);
     setError(null);
+  };
+
+  // Gérer le changement de fichier image
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const validation = userService.validateImageFile(file);
+      if (validation.valid) {
+        setFormData({ ...formData, pictureFile: file });
+        setError(null);
+      } else {
+        setError(validation.message || 'Fichier invalide');
+        e.target.value = ''; // Reset input
+      }
+    }
   };
 
   // Soumettre le formulaire
@@ -153,7 +171,7 @@ export default function Utilisateurs() {
           picture: formData.picture || undefined
         };
 
-        const response = await userService.updateUser(editingUser.id, updateData);
+        const response = await userService.updateUser(editingUser.id, updateData, formData.pictureFile);
         
         if (response.success) {
           closeModals();
@@ -176,7 +194,7 @@ export default function Utilisateurs() {
           picture: formData.picture || undefined
         };
 
-        const response = await userService.createUser(createData);
+        const response = await userService.createUser(createData, formData.pictureFile);
         
         if (response.success) {
           closeModals();
@@ -578,6 +596,33 @@ export default function Utilisateurs() {
                 />
               </div>
 
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Photo de profil
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                />
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Formats supportés: JPEG, PNG, GIF, WebP (max 10MB)
+                </p>
+                {formData.pictureFile && (
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Fichier sélectionné: {formData.pictureFile.name}
+                    </p>
+                    <img
+                      src={URL.createObjectURL(formData.pictureFile)}
+                      alt="Aperçu"
+                      className="mt-2 w-20 h-20 object-cover rounded-lg border"
+                    />
+                  </div>
+                )}
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -782,6 +827,43 @@ export default function Utilisateurs() {
                     Compte actif
                   </label>
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Photo de profil
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white file:mr-4 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                />
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Formats supportés: JPEG, PNG, GIF, WebP (max 10MB)
+                </p>
+                {formData.pictureFile && (
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Nouveau fichier: {formData.pictureFile.name}
+                    </p>
+                    <img
+                      src={URL.createObjectURL(formData.pictureFile)}
+                      alt="Nouvel aperçu"
+                      className="mt-2 w-20 h-20 object-cover rounded-lg border"
+                    />
+                  </div>
+                )}
+                {formData.picture && !formData.pictureFile && (
+                  <div className="mt-2">
+                    <img 
+                      src={formData.picture} 
+                      alt="Photo actuelle" 
+                      className="w-16 h-16 rounded-full object-cover border border-gray-300"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Photo actuelle</p>
+                  </div>
+                )}
               </div>
 
               <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md p-3">

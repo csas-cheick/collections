@@ -105,15 +105,40 @@ class UserService {
   /**
    * Créer un nouvel utilisateur
    */
-  async createUser(userData: CreateUserRequest): Promise<UserOperationResponse> {
+  async createUser(userData: CreateUserRequest, pictureFile?: File): Promise<UserOperationResponse> {
     try {
-      const response = await fetch(API_BASE_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(userData)
-      });
+      let response;
+
+      if (pictureFile) {
+        // Utiliser FormData si un fichier est fourni
+        const formData = new FormData();
+        formData.append('Name', userData.name);
+        formData.append('UserName', userData.userName);
+        formData.append('Email', userData.email);
+        formData.append('Password', userData.password);
+        formData.append('Role', userData.role);
+        formData.append('Status', userData.status.toString());
+        
+        if (userData.phone) formData.append('Phone', userData.phone);
+        if (userData.country) formData.append('Country', userData.country);
+        if (userData.city) formData.append('City', userData.city);
+        
+        formData.append('PictureFile', pictureFile);
+
+        response = await fetch(API_BASE_URL, {
+          method: 'POST',
+          body: formData
+        });
+      } else {
+        // Utiliser JSON si pas de fichier
+        response = await fetch(API_BASE_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(userData)
+        });
+      }
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -130,15 +155,39 @@ class UserService {
   /**
    * Mettre à jour un utilisateur
    */
-  async updateUser(id: number, userData: UpdateUserRequest): Promise<UserOperationResponse> {
+  async updateUser(id: number, userData: UpdateUserRequest, pictureFile?: File): Promise<UserOperationResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(userData)
-      });
+      let response;
+
+      if (pictureFile) {
+        // Utiliser FormData si un fichier est fourni
+        const formData = new FormData();
+        formData.append('Name', userData.name);
+        formData.append('UserName', userData.userName);
+        formData.append('Email', userData.email);
+        formData.append('Role', userData.role);
+        formData.append('Status', userData.status.toString());
+        
+        if (userData.phone) formData.append('Phone', userData.phone);
+        if (userData.country) formData.append('Country', userData.country);
+        if (userData.city) formData.append('City', userData.city);
+        
+        formData.append('PictureFile', pictureFile);
+
+        response = await fetch(`${API_BASE_URL}/${id}`, {
+          method: 'PUT',
+          body: formData
+        });
+      } else {
+        // Utiliser JSON si pas de fichier
+        response = await fetch(`${API_BASE_URL}/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(userData)
+        });
+      }
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -339,6 +388,31 @@ class UserService {
       default:
         return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
     }
+  }
+
+  /**
+   * Valider un fichier image
+   */
+  validateImageFile(file: File): { valid: boolean; message?: string } {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    
+    if (!allowedTypes.includes(file.type.toLowerCase())) {
+      return { 
+        valid: false, 
+        message: 'Type de fichier non supporté. Utilisez JPEG, PNG, GIF ou WebP' 
+      };
+    }
+
+    // Taille maximale : 10MB
+    const maxSize = 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      return { 
+        valid: false, 
+        message: 'La taille du fichier ne doit pas dépasser 10MB' 
+      };
+    }
+
+    return { valid: true };
   }
 }
 

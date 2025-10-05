@@ -5,12 +5,28 @@ import UserInfoCard from "../../components/UserProfile/UserInfoCard";
 import UserAddressCard from "../../components/UserProfile/UserAddressCard";
 import PageMeta from "../../components/common/PageMeta";
 import { userService } from "../../services";
-import { User } from "../../types";
+import { User } from "../../types/user";
 
 export default function Profil() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handleUserUpdate = (updatedUser: User) => {
+    setUser(updatedUser);
+    // Optionnel: mettre à jour aussi dans le localStorage si utilisé pour l'auth
+    const authUser = localStorage.getItem('auth_user');
+    if (authUser) {
+      try {
+        const currentAuthUser = JSON.parse(authUser);
+        if (currentAuthUser.id === updatedUser.id) {
+          localStorage.setItem('auth_user', JSON.stringify(updatedUser));
+        }
+      } catch (e) {
+        console.warn('Erreur lors de la mise à jour des données d\'auth:', e);
+      }
+    }
+  };
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -55,7 +71,7 @@ export default function Profil() {
         )}
         
         <div className="space-y-6">
-          <UserMetaCard user={user} loading={loading} />
+          <UserMetaCard user={user} loading={loading} onUpdate={handleUserUpdate} />
           <UserInfoCard user={user} loading={loading} />
           <UserAddressCard user={user} loading={loading} />
         </div>

@@ -76,14 +76,13 @@ export interface UserFormData {
   city: string;
   status: boolean;
   picture: string;
+  pictureFile?: File;
 }
 
 // Options pour les rôles
 export const USER_ROLES = [
   { value: 'Admin', label: 'Administrateur' },
-  { value: 'Manager', label: 'Gestionnaire' },
   { value: 'User', label: 'Utilisateur' },
-  { value: 'Client', label: 'Client' }
 ] as const;
 
 // Options pour les pays (exemples)
@@ -96,7 +95,15 @@ export const COUNTRIES = [
   'Tunisie',
   'Algérie',
   'Sénégal',
-  'Côte d\'Ivoire'
+  'Côte d\'Ivoire',
+  'Cameroun',
+  'Ghana',
+  'RDC',
+  'Nigeria',
+  'Mali',
+  'Burkina Faso',
+  'Niger',
+  'Tchad',
 ] as const;
 
 export type UserRole = typeof USER_ROLES[number]['value'];

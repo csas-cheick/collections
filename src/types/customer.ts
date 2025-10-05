@@ -35,13 +35,16 @@ export interface Measure {
   id: number;
   customerId: number;
   tourPoitrine?: number;
-  tourHanches?: number;
+  tourCeinture?: number;
   longueurManche?: number;
   tourBras?: number;
   longueurChemise?: number;
   longueurPantalon?: number;
   largeurEpaules?: number;
   tourCou?: number;
+  tourMachette?: number;
+  basDuPied?: number;
+  cuisse?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -49,24 +52,30 @@ export interface Measure {
 export interface CreateMeasureRequest {
   customerId: number;
   tourPoitrine?: number;
-  tourHanches?: number;
+  tourCeinture?: number;
   longueurManche?: number;
   tourBras?: number;
   longueurChemise?: number;
   longueurPantalon?: number;
   largeurEpaules?: number;
   tourCou?: number;
+  tourMachette?: number;
+  basDuPied?: number;
+  cuisse?: number;
 }
 
 export interface UpdateMeasureRequest {
   tourPoitrine?: number;
-  tourHanches?: number;
+  tourCeinture?: number;
   longueurManche?: number;
   tourBras?: number;
   longueurChemise?: number;
   longueurPantalon?: number;
   largeurEpaules?: number;
   tourCou?: number;
+  tourMachette?: number;
+  basDuPied?: number;
+  cuisse?: number;
 }
 
 // Types pour les réponses API
