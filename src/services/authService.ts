@@ -1,6 +1,6 @@
 import { LoginRequest, LoginResponse, User } from '../types';
 
-const API_BASE_URL = 'https://collections-backend-wucx.onrender.com/api';
+const API_BASE_URL = 'https://collections-backend-wucx.onrender.com/api';//'http://localhost:5120/api';//
 
 class AuthService {
   /**

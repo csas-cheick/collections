@@ -3,10 +3,11 @@ import {
   CreateTransactionDto,
   UpdateTransactionDto,
   TransactionFilters,
-  StatistiquesCaisse
+  StatistiquesCaisse,
+  TransactionsGroupeesParSemaine
 } from '../types/transaction';
 
-const API_BASE_URL = 'https://collections-backend-wucx.onrender.com/api';
+const API_BASE_URL = 'https://collections-backend-wucx.onrender.com/api'; //'http://localhost:5120/api';//
 
 class TransactionService {
   private readonly baseURL = `${API_BASE_URL}/transactions`;
@@ -235,6 +236,30 @@ class TransactionService {
     }
     
     return new Error('Une erreur inattendue s\'est produite');
+  }
+
+  /**
+   * Récupérer les transactions groupées par semaine
+   */
+  async getTransactionsParSemaine(dateDebut?: string, dateFin?: string): Promise<TransactionsGroupeesParSemaine> {
+    try {
+      const params = new URLSearchParams();
+      
+      if (dateDebut) params.append('dateDebut', dateDebut);
+      if (dateFin) params.append('dateFin', dateFin);
+
+      const queryString = params.toString();
+      const url = queryString ? `${this.baseURL}/par-semaine?${queryString}` : `${this.baseURL}/par-semaine`;
+      
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Erreur lors de la récupération des transactions par semaine:', error);
+      throw this.handleError(error);
+    }
   }
 }
 

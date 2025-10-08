@@ -12,6 +12,7 @@ import Modèles from "./pages/Modeles/Modeles";
 import Commandes from "./pages/Commandes/Commandes";
 import Clients from "./pages/Clients/Clients";
 import Caisse from "./pages/Caisse/Caisse";
+import CaisseParSemaine from "./pages/Caisse/CaisseParSemaine";
 import { useAuth } from "./context/AuthContext";
 
 // Composant de protection des routes
@@ -65,6 +66,7 @@ export default function App() {
             <Route path="profil" element={<Profil />} />
             <Route path="calendrier" element={<Calendrier />} />
             <Route path="caisse" element={<Caisse />} />
+            <Route path="caisse-par-semaine" element={<CaisseParSemaine />} />
             <Route path="blank" element={<Blank />} />
             <Route path="utilisateurs" element={<Utilisateurs />} />
             <Route path="modeles" element={<Modèles />} />

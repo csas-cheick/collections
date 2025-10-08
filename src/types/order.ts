@@ -153,6 +153,9 @@ export interface OrderItemFormData {
   quantite: number;
   prixUnitaire?: number;
   notes?: string;
+  isCustomModel?: boolean; // Indique si c'est un modèle personnalisé
+  customModelName?: string; // Nom du modèle personnalisé
+  customModelPrice?: number; // Prix du modèle personnalisé
 }
 
 // Constantes pour les options

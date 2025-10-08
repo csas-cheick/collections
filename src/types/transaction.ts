@@ -115,3 +115,37 @@ export const CATEGORIES_SUGGESTIONS = [
   'Formation',
   'Autres'
 ];
+
+// Types pour les transactions groupées par semaine
+export interface TransactionParSemaine {
+  annee: number;
+  numeroSemaine: number;
+  debutSemaine: string; // ISO string
+  finSemaine: string; // ISO string
+  transactions: Transaction[];
+  totaux: TotauxSemaine;
+}
+
+export interface TotauxSemaine {
+  totalEntrees: number;
+  totalSorties: number;
+  soldeNet: number;
+  nombreTransactions: number;
+  nombreEntrees: number;
+  nombreSorties: number;
+}
+
+export interface TransactionsGroupeesParSemaine {
+  semaines: TransactionParSemaine[];
+  totauxGeneraux: TotauxGeneraux;
+}
+
+export interface TotauxGeneraux {
+  totalEntreesGenerales: number;
+  totalSortiesGenerales: number;
+  soldeNetGeneral: number;
+  nombreTransactionsTotal: number;
+  nombreSemaines: number;
+  periodeDebut: string; // ISO string
+  periodeFin: string; // ISO string
+}

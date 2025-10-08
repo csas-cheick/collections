@@ -7,7 +7,7 @@ import {
   UserFilters
 } from '../types/user';
 
-const API_BASE_URL = 'https://collections-backend-wucx.onrender.com/api/users';
+const API_BASE_URL = 'https://collections-backend-wucx.onrender.com/api/users';//'http://localhost:5120/api/users';//
 
 class UserService {
   /**

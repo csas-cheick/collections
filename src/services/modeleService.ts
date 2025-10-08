@@ -1,6 +1,6 @@
 import { Modele, CreateModeleRequest, UpdateModeleRequest, ModeleResponse } from '../types';
 
-const API_BASE_URL = 'https://collections-backend-wucx.onrender.com/api';
+const API_BASE_URL = 'https://collections-backend-wucx.onrender.com/api';//'http://localhost:5120/api';//
 
 class ModeleService {
   private readonly baseUrl: string;

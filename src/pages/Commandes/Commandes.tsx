@@ -205,7 +205,10 @@ export default function Orders() {
       typeTissu: "",
       couleur: "",
       quantite: 1,
-      notes: ""
+      notes: "",
+      isCustomModel: false,
+      customModelName: "",
+      customModelPrice: undefined
     };
     setFormData(prev => ({
       ...prev,
@@ -220,7 +223,7 @@ export default function Orders() {
     }));
   };
 
-  const updateOrderItem = (index: number, field: keyof OrderItemFormData, value: string | number) => {
+  const updateOrderItem = (index: number, field: keyof OrderItemFormData, value: string | number | boolean | undefined) => {
     setFormData(prev => ({
       ...prev,
       orderItems: prev.orderItems.map((item, i) => {
@@ -244,8 +247,17 @@ export default function Orders() {
 
   const calculateTotal = (): number => {
     return formData.orderItems.reduce((total, item) => {
-      const modele = modeles.find(m => m.id === item.modeleId);
-      const prix = modele ? modele.price : (item.prixUnitaire || 0);
+      let prix = 0;
+      
+      if (item.isCustomModel) {
+        // Modèle personnalisé : utiliser le prix personnalisé
+        prix = item.customModelPrice || 0;
+      } else {
+        // Modèle de la collection : chercher le prix dans les modèles
+        const modele = modeles.find(m => m.id === item.modeleId);
+        prix = modele ? modele.price : (item.prixUnitaire || 0);
+      }
+      
       return total + (prix * item.quantite);
     }, 0);
   };
@@ -649,14 +661,54 @@ export default function Orders() {
                           </div>
 
                           <div className="space-y-4">
-                            {/* Modèle - Pleine largeur */}
+                            {/* Choix du type de modèle */}
                             <div>
                               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Modèle *
+                                Type de modèle *
                               </label>
-                              
-                              {/* Modèle sélectionné */}
-                              {item.modeleId > 0 ? (
+                              <div className="flex gap-4">
+                                <label className="flex items-center cursor-pointer">
+                                  <input
+                                    type="radio"
+                                    checked={!item.isCustomModel}
+                                    onChange={() => {
+                                      updateOrderItem(index, 'isCustomModel', false);
+                                      updateOrderItem(index, 'customModelName', '');
+                                      updateOrderItem(index, 'customModelPrice', 0);
+                                    }}
+                                    className="mr-2"
+                                  />
+                                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                                    Modèle de la collection
+                                  </span>
+                                </label>
+                                <label className="flex items-center cursor-pointer">
+                                  <input
+                                    type="radio"
+                                    checked={item.isCustomModel === true}
+                                    onChange={() => {
+                                      updateOrderItem(index, 'isCustomModel', true);
+                                      updateOrderItem(index, 'modeleId', 0);
+                                    }}
+                                    className="mr-2"
+                                  />
+                                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                                    Modèle personnalisé
+                                  </span>
+                                </label>
+                              </div>
+                            </div>
+
+                            {/* Modèle - Pleine largeur */}
+                            {!item.isCustomModel ? (
+                              /* Mode: Modèle de la collection */
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                  Modèle *
+                                </label>
+                                
+                                {/* Modèle sélectionné */}
+                                {item.modeleId > 0 ? (
                                 <div className="border border-green-300 rounded-lg p-3 bg-green-50 dark:bg-green-900/20">
                                   {(() => {
                                     const selectedModele = modeles.find(m => m.id === item.modeleId);
@@ -729,7 +781,64 @@ export default function Orders() {
                                   </div>
                                 </div>
                               )}
-                            </div>
+                              </div>
+                            ) : (
+                              /* Mode: Modèle personnalisé */
+                              <div className="space-y-3">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                  {/* Nom du modèle personnalisé */}
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                      Nom du modèle *
+                                    </label>
+                                    <input
+                                      type="text"
+                                      value={item.customModelName || ''}
+                                      onChange={(e) => updateOrderItem(index, 'customModelName', e.target.value)}
+                                      placeholder="Ex: Complet 3 pièces"
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm"
+                                      required
+                                    />
+                                  </div>
+
+                                  {/* Prix du modèle personnalisé */}
+                                  <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                      Prix unitaire (F CFA) *
+                                    </label>
+                                    <input
+                                      type="number"
+                                      value={item.customModelPrice || ''}
+                                      onChange={(e) => updateOrderItem(index, 'customModelPrice', parseFloat(e.target.value) || 0)}
+                                      placeholder="Ex: 50000"
+                                      min="0"
+                                      step="100"
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm"
+                                      required
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Aperçu du modèle personnalisé */}
+                                {item.customModelName && item.customModelPrice && (
+                                  <div className="border border-blue-300 rounded-lg p-3 bg-blue-50 dark:bg-blue-900/20">
+                                    <div className="flex items-center justify-between">
+                                      <div>
+                                        <h4 className="font-medium text-gray-900 dark:text-white">
+                                          {item.customModelName}
+                                        </h4>
+                                        <p className="text-sm text-blue-600 dark:text-blue-400">
+                                          Prix: {orderService.formatPrice(item.customModelPrice)}
+                                        </p>
+                                      </div>
+                                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300">
+                                        Personnalisé
+                                      </span>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
 
                             {/* Autres champs sur une ligne */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">

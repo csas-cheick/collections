@@ -50,10 +50,13 @@ const navItems: NavItem[] = [
     name: "Calendrier",
     path: "calendrier",
   },
-    {
+  {
     icon: <DollarIcon />,
     name: "Caisse",
-    path: "caisse",
+    subItems: [
+      { name: "Transactions", path: "caisse", pro: false },
+      { name: "Par Semaine", path: "caisse-par-semaine", pro: false }
+    ],
   },
   
 ];
