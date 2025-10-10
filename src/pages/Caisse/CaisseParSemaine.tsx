@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   TransactionsGroupeesParSemaine,
   TransactionParSemaine,
@@ -27,7 +27,7 @@ export default function CaisseParSemaine() {
   }, []);
 
   // Charger les données
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!dateDebut || !dateFin) return;
 
     try {
@@ -48,15 +48,14 @@ export default function CaisseParSemaine() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateDebut, dateFin]);
 
-  // Charger les données une seule fois au début avec les dates par défaut
+  // Charger les données quand les dates sont définies pour la première fois
   useEffect(() => {
-    if (dateDebut && dateFin) {
+    if (dateDebut && dateFin && !transactionsGroupees) {
       loadData();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Intentionnellement vide pour ne charger qu'une fois au début
+  }, [dateDebut, dateFin, transactionsGroupees, loadData]);
 
   // Fonction pour le bouton actualiser
   const handleActualiser = () => {

@@ -7,7 +7,7 @@ import {
   TransactionsGroupeesParSemaine
 } from '../types/transaction';
 
-const API_BASE_URL = 'https://collections-backend-wucx.onrender.com/api'; //'http://localhost:5120/api';//
+const API_BASE_URL = 'https://collections-backend-wucx.onrender.com/api'; // 'http://localhost:5120/api';//
 
 class TransactionService {
   private readonly baseURL = `${API_BASE_URL}/transactions`;
