@@ -135,7 +135,7 @@ export default function Modeles() {
   };
 
   const handleDelete = async (modele: Modele) => {
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer ce modèle (${modele.price}€) ?`)) {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer ce modèle (${modele.price}FCFA) ?`)) {
       return;
     }
 
@@ -243,7 +243,7 @@ export default function Modeles() {
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-lg font-semibold text-gray-800 dark:text-white">
-                      {modele.price}€
+                      {modele.price}FCFA
                     </span>
                     <div className="flex gap-2">
                       <button
@@ -296,7 +296,7 @@ export default function Modeles() {
                 {/* Prix */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Prix (€)
+                    Prix (FCFA)
                   </label>
                   <input
                     type="number"
